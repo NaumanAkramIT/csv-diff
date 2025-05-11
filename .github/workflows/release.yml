@@ -1,0 +1,83 @@
+permissions:
+  contents: write
+
+name: Build and Release Go Binaries
+
+on:
+  release:
+    types: [ created ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        os: [ linux, windows, darwin ]
+        arch: [ amd64, arm64 ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Extract Go Version from go.mod or set default
+        id: go_version
+        run: |
+          go_version=$(grep -m 1 '^go ' go.mod | awk '{print $2}')
+          if [ -z "$go_version" ]; then
+            echo "Go version not found in go.mod. Using default version 1.24.3."
+            go_version="1.24.3"
+          fi
+          echo "GO_VERSION=$go_version" >> $GITHUB_ENV
+          echo "Go version: $go_version"
+
+      - name: Get Latest Git Tag
+        id: git_tag
+        run: |
+          latest_tag=$(git describe --tags --abbrev=0 || echo "v0.0.0")
+          echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
+          echo "Latest tag: $latest_tag"
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Run Unit Tests
+        run: |
+          go test ./... -v
+
+      - name: Build, Archive, and Checksum
+        run: |
+          bin_name=csv-diff-${{ matrix.os }}-${{ matrix.arch }}
+          if [ "${{ matrix.os }}" = "windows" ]; then
+            bin_name="${bin_name}.exe"
+          fi
+
+          GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -ldflags "-X main.version=${{ env.LATEST_TAG }}" -o $bin_name ./app/cmd
+
+          if [ "${{ matrix.os }}" = "windows" ]; then
+            archive_name="${bin_name%.exe}.zip"
+            zip -r "$archive_name" "$bin_name"
+          else
+            archive_name="${bin_name}.tar.gz"
+            tar -czf "$archive_name" "$bin_name"
+          fi
+
+          sha256sum "$bin_name" > "${bin_name}.sha256"
+          sha256sum "$archive_name" > "${archive_name}.sha256"
+
+          echo "BIN_NAME=$bin_name" >> $GITHUB_ENV
+          echo "ARCHIVE_NAME=$archive_name" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ${{ env.BIN_NAME }}
+            ${{ env.ARCHIVE_NAME }}
+            ${{ env.BIN_NAME }}.sha256
+            ${{ env.ARCHIVE_NAME }}.sha256
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

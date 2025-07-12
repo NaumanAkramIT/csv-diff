@@ -1,124 +1,112 @@
-# CSV-DIFF
+# CSV Diff Tool 🛠️
 
-**CSV-DIFF** is a powerful and flexible CLI tool written in Go for comparing two CSV files. It highlights added,
-deleted, updated, and reordered rows based on configurable composite keys. It’s useful for tracking changes in tabular
-data like exports from databases, spreadsheets, or APIs.
+![GitHub Release](https://img.shields.io/github/v/release/NaumanAkramIT/csv-diff?style=flat-square) ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
----
+Welcome to the **CSV Diff Tool** repository! This project offers a fast and flexible command-line tool for comparing CSV files using composite keys. It generates clean, structured diffs, making it easier for you to identify changes between datasets.
 
-## 📑 Table of Contents
+## Table of Contents
 
-- [Features](#-features)
-- [Installation](#-installation)
-- [Usage](#-usage)
-- [Makefile](#-makefile)
-- [License](#-license)
-- [Contributing](#-contributing)
-- [Code of Conduct](#-code-of-conduct)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Command-Line Options](#command-line-options)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
----
+## Features
 
-## 📌 Features
+- **Fast Comparison**: Quickly compare large CSV files.
+- **Composite Key Support**: Use multiple columns as keys for accurate comparisons.
+- **Structured Output**: Get clean diffs that are easy to read.
+- **Cross-Platform**: Works on Linux, macOS, and Windows.
+- **Open Source**: Free to use and modify under the MIT License.
 
-- Compare two CSV files and identify:
-    - Added, deleted, updated, or reordered rows
-- Use composite keys to match rows across files
-- Output results in JSON or CSV
-- Filter output to focus on specific change types
-- Optionally include unchanged rows
-- Easy to use via CLI flags
+## Installation
 
----
+To get started, download the latest release of the CSV Diff Tool from our [Releases page](https://github.com/NaumanAkramIT/csv-diff/releases). Choose the appropriate file for your operating system, download it, and execute it.
 
-## 🛠️ Installation
+### For Linux and macOS
 
-### Install via `go install`
+1. Open your terminal.
+2. Download the binary file using `curl` or `wget`:
+   ```bash
+   curl -LO https://github.com/NaumanAkramIT/csv-diff/releases/download/vX.X.X/csv-diff-linux-amd64
+   chmod +x csv-diff-linux-amd64
+   sudo mv csv-diff-linux-amd64 /usr/local/bin/csv-diff
+   ```
 
-Make sure you have [Go](https://golang.org/dl/) installed.
+### For Windows
 
-```bash
-go install github.com/manishjalui11/csv-diff@latest
-```
+1. Download the `.exe` file from the [Releases page](https://github.com/NaumanAkramIT/csv-diff/releases).
+2. Place the executable in a directory included in your system's PATH.
 
-This will install csv-diff into your $GOPATH/bin.
+## Usage
 
----
-
-## 🚀 Usage
-
-```bash
-csv-diff [flags] <original.csv> <new.csv>
-```
-
-### Example
+Once installed, you can start using the CSV Diff Tool from your command line. The basic syntax is:
 
 ```bash
-csv-diff -k 0,1 -s json -o diff.json file_old.csv file_new.csv
+csv-diff [options] <file1.csv> <file2.csv>
 ```
 
-### CLI Flags
+This command will compare `file1.csv` and `file2.csv` and output the differences.
 
-| Flag                | Short | Description                                                                   |
-|---------------------|-------|-------------------------------------------------------------------------------|
-| --save              | -s    | Format to save output (json or csv)                                           |
-| --output            | -o    | Filename to save changes                                                      |
-| --key               | -k    | Comma-separated list of column indexes to use as a composite key (default: 0) |
-| --show-changes      | -c    | Show detailed changes                                                         |
-| --include-unchanged | -z    | Include unchanged rows in the output                                          |
-| --filter-added      | -a    | Only show added rows                                                          |
-| --filter-deleted    | -d    | Only show deleted rows                                                        |
-| --filter-updated    | -u    | Only show updated rows                                                        |
-| --filter-reordered  | -r    | Only show reordered rows                                                      |
-| --help              | -h    | Show usage/help information                                                   |
-| --version           | -v    | Show app version                                                              |
+## Command-Line Options
 
----
+| Option         | Description                              |
+|----------------|------------------------------------------|
+| `-k, --keys`   | Specify composite keys for comparison.   |
+| `-o, --output` | Specify output format (e.g., JSON, CSV).|
+| `-h, --help`   | Display help information.                |
+| `-v, --version`| Show the version of the tool.           |
 
-## 🧰 Makefile
-The project includes a Makefile to simplify common development tasks.
+## Examples
 
-Common Targets
+### Basic Comparison
+
+To compare two CSV files without any options:
+
 ```bash
-make build        # Build the csv-diff binary
-make test         # Run tests
-make test-race    # Run tests with race detection and coverage
-make run          # Build and run csv-diff with sample files
-make clean        # Remove built binaries
-make help         # Show available targets
+csv-diff file1.csv file2.csv
 ```
-You can always run make help to list all available targets.
+
+### Using Composite Keys
+
+If you want to compare based on specific columns, use the `-k` option:
+
+```bash
+csv-diff -k column1,column2 file1.csv file2.csv
+```
+
+### Outputting in JSON Format
+
+To get the differences in JSON format, use the `-o` option:
+
+```bash
+csv-diff -o json file1.csv file2.csv
+```
+
+## Contributing
+
+We welcome contributions! If you have suggestions for improvements or new features, please open an issue or submit a pull request. Make sure to follow our code of conduct and contribution guidelines.
+
+1. Fork the repository.
+2. Create your feature branch: `git checkout -b feature/MyFeature`
+3. Commit your changes: `git commit -m 'Add some feature'`
+4. Push to the branch: `git push origin feature/MyFeature`
+5. Open a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For questions or feedback, please reach out to the maintainer:
+
+- **Nauman Akram**: [GitHub Profile](https://github.com/NaumanAkramIT)
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more details.
-
----
-
-## 🤝 Contributing
-
-We welcome contributions from the community! Whether it's bug fixes, new features, or improvements, your help is
-appreciated.
-
-To get started:
-
-1. **Fork the repository** and create your branch (`git checkout -b feature-branch`).
-2. **Make your changes** and test them thoroughly.
-3. **Commit your changes** with clear and concise commit messages.
-4. **Push to your fork** (`git push origin feature-branch`).
-5. **Open a Pull Request** describing your changes and why they're useful.
-
-If you encounter any issues or have ideas for new features,
-please [open an issue](https://github.com/manishjalui11/csv-diff/issues) or submit a feature request.
-
-By contributing, you agree to follow the project's coding guidelines and adhere to our code of conduct.
-
-Thank you for being awesome and helping improve the project! 🙌
-
----
-
-## 📜 Code of Conduct
-
-We are committed to creating a welcoming environment for all contributors. Please review and follow
-our [Code of Conduct](./CODE_OF_CONDUCT.md).
+Thank you for checking out the CSV Diff Tool! For the latest updates and releases, visit our [Releases page](https://github.com/NaumanAkramIT/csv-diff/releases). Happy comparing!
